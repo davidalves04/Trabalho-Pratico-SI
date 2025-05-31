@@ -4,7 +4,7 @@ import base64
 import time
 
 def decrypt_file(input_file, output_file, password):
-    # Garantir que a senha tem 16 bytes (AES-128)
+    #Garante que a senha tem 16 bytes
     key = password.ljust(16)[:16].encode()
 
     with open(input_file, 'r', encoding='utf-8') as f:
@@ -20,28 +20,27 @@ def decrypt_file(input_file, output_file, password):
     total_blocks = len(ciphertext) // block_size
     decrypted_data = b""
 
-    print("Desencriptando...")
+    print("A desencriptar...")
 
     for i in range(total_blocks):
         block = ciphertext[i*block_size : (i+1)*block_size]
         decrypted_block = cipher.decrypt(block)
         decrypted_data += decrypted_block
 
-        # Mostrar progresso (simples)
+        #Mostrar progresso
         percent = int(((i + 1) / total_blocks) * 100)
         print(f"\rProgresso: {percent}%", end='', flush=True)
-        time.sleep(0.01)  # Só para tornar visível o progresso
+        time.sleep(0.01)  #Só para tornar visível o progresso
 
     print("\nDesencriptação completa.")
 
-    # Remover o padding PKCS7
+    #Remove o padding PKCS7
     pad_len = decrypted_data[-1]
     decrypted_text = decrypted_data[:-pad_len].decode()
 
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(decrypted_text)
 
-# Exemplo de uso
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("Uso: python decrypt.py <input_file> <output_file> <password>")

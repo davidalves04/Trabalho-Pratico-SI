@@ -1,12 +1,12 @@
-from Crypto.Cipher import AES  # pip3 install pycryptodome
+from Crypto.Cipher import AES  #pip3 install pycryptodome
 import os
 import base64
 
 def menu():
-    print("\n=== Menu Inicial ===")
+    print("\n========= Menu ========")
     print("1. Encriptar")
     print("2. Desencriptar")
-    print("3. Dictionary Attack")
+    print("3. Ataque de dicionário")
     print("0. Sair")
 
 def encrypt_file(input_file, output_file, password):
@@ -46,7 +46,7 @@ def decrypt_file(input_file, output_file, password):
 
     cipher = AES.new(key, AES.MODE_CBC, iv)
 
-    print("Desencriptando...")
+    print("A desencriptar...")
 
     decrypted_data = cipher.decrypt(ciphertext)
     pad_len = decrypted_data[-1]
@@ -75,7 +75,7 @@ def dictionary_attack(encrypted_file, wordlist_file, output_file):
     with open(wordlist_path, 'r', encoding='utf-8') as f:
         passwords = [line.strip() for line in f]
 
-    print("Iniciando Dictionary Attack...")
+    print("A iniciar o ataque...")
 
     for attempt, password in enumerate(passwords, 1):
         try:
@@ -92,13 +92,13 @@ def dictionary_attack(encrypted_file, wordlist_file, output_file):
             with open(output_path, 'w', encoding='utf-8') as f_out:
                 f_out.write(decrypted_text)
 
-            print(f"\n✅ Palavra-passe encontrada: '{password}'")
-            print(f"Conteúdo desencriptado salvo em '{output_file}'.")
+            print(f"\nPalavra-passe encontrada: '{password}'")
+            print(f"Conteúdo desencriptado guardado em '{output_file}'.")
             return
         except Exception:
             print(f"\rTentativa {attempt}/{len(passwords)}: '{password}'", end='', flush=True)
 
-    print("\n❌ Nenhuma palavra-passe válida encontrada.")
+    print("\nNenhuma palavra-passe válida encontrada.")
 
 def main():
     while True:
@@ -120,9 +120,9 @@ def main():
             decrypt_file(input_file, output_file, password)
 
         elif opcao == "3":
-            print("\n--- Dictionary Attack ---")
+            print("\n--- Ataque de dicionário ---")
             encrypted_file = input("Nome do ficheiro encriptado: ")
-            wordlist_file = input("Nome do ficheiro de palavras: ")
+            wordlist_file = input("Nome do ficheiro com a lista de palavras: ")
             while True:
                 output_file = input("Nome do ficheiro de saída para o conteúdo desencriptado: ")
                 if output_file == wordlist_file:
@@ -132,7 +132,7 @@ def main():
             dictionary_attack(encrypted_file, wordlist_file, output_file)
 
         elif opcao == "0":
-            print("Saindo do programa...")
+            print("A sair do programa...")
             break
 
         else:

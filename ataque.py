@@ -15,7 +15,7 @@ def decrypt_file(input_file, output_file, password):
 
     decrypted_data = cipher.decrypt(ciphertext)
 
-    # Validação do padding PKCS7
+    #Validação do padding PKCS7
     pad_len = decrypted_data[-1]
     if pad_len < 1 or pad_len > 16:
         raise ValueError("Padding inválido.")
@@ -28,7 +28,7 @@ def decrypt_file(input_file, output_file, password):
     print(f"\nFicheiro '{input_file}' desencriptado com sucesso para '{output_file}'.")
 
 
-def bruteforce_decrypt(encrypted_file, wordlist_file, output_file="decrypted_output.txt"):
+def dictionary_decrypt(encrypted_file, wordlist_file, output_file="decrypted_output.txt"):
     encrypted_path = os.path.join(FOLDER, encrypted_file)
     wordlist_path = os.path.join(FOLDER, wordlist_file)
     output_path = os.path.join(FOLDER, output_file)
@@ -43,7 +43,7 @@ def bruteforce_decrypt(encrypted_file, wordlist_file, output_file="decrypted_out
     with open(wordlist_path, 'r', encoding='utf-8') as f:
         passwords = [line.strip() for line in f.readlines()]
 
-    print("Iniciando brute-force...")
+    print("A iniciar o ataque...")
 
     for attempt, password in enumerate(passwords, 1):
         try:
@@ -57,14 +57,14 @@ def bruteforce_decrypt(encrypted_file, wordlist_file, output_file="decrypted_out
 
             decrypted_text = decrypted_data[:-pad_len].decode('utf-8')
 
-            # Se decodificar e validar padding, senha está correta
+            #Se descodificar e validar o padding, a senha está correta
             with open(output_path, 'w', encoding='utf-8') as f_out:
                 f_out.write(decrypted_text)
 
-            print(f"\n✅ Palavra-passe encontrada: '{password}'")
-            print(f"Conteúdo desencriptado salvo em '{output_file}'.")
+            print(f"\nPalavra-passe encontrada: '{password}'")
+            print(f"Conteúdo desencriptado guardado em '{output_file}'.")
             return
         except Exception:
             print(f"\rTentativa {attempt}/{len(passwords)}: '{password}'", end='', flush=True)
 
-    print("\n❌ Nenhuma palavra-passe válida encontrada.")
+    print("\nNenhuma palavra-passe válida encontrada.")
