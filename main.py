@@ -13,23 +13,22 @@ def encrypt_file(input_file, output_file, password):
     input_path = os.path.join(folder, input_file)
     output_path = os.path.join(folder, output_file)
     key = password.ljust(16)[:16].encode()
-    
+
     with open(input_path, 'r', encoding='utf-8') as f:
         text = f.read()
 
+    text_bytes = text.encode('utf-8')
+    pad_len = 16 - (len(text_bytes) % 16)
+    padded_text_bytes = text_bytes + bytes([pad_len] * pad_len)
+
     iv = os.urandom(16)
     cipher = AES.new(key, AES.MODE_CBC, iv)
-
-    pad_len = 16 - len(text) % 16
-    padded_text = text + chr(pad_len) * pad_len
-
-    encrypted_data = cipher.encrypt(padded_text.encode())
+    encrypted_data = cipher.encrypt(padded_text_bytes)
 
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(base64.b64encode(iv + encrypted_data).decode())
 
     print(f"Ficheiro '{input_file}' encriptado com sucesso para '{output_file}'.")
-
 def decrypt_file(input_file, output_file, password):
     folder = "txt files"
     input_path = os.path.join(folder, input_file)
@@ -45,20 +44,9 @@ def decrypt_file(input_file, output_file, password):
 
     cipher = AES.new(key, AES.MODE_CBC, iv)
 
-    decrypted_data = b""
-    block_size = 16
-    total_blocks = len(ciphertext) // block_size
-
     print("Desencriptando...")
 
-    for i in range(total_blocks):
-        block = ciphertext[i*block_size : (i+1)*block_size]
-        decrypted_block = cipher.decrypt(block)
-        decrypted_data += decrypted_block
-
-        percent = int(((i + 1) / total_blocks) * 100)
-        print(f"\rProgresso: {percent}%", end='', flush=True)
-
+    decrypted_data = cipher.decrypt(ciphertext)
     pad_len = decrypted_data[-1]
     decrypted_text = decrypted_data[:-pad_len].decode()
 
